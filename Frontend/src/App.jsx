@@ -4,12 +4,12 @@ import viteLogo from '/vite.svg'
 import './App.css'
 import { Route, RouterProvider, createBrowserRouter, createRoutesFromElements } from 'react-router-dom'
 import Layout from './Layout.jsx'
-import Home from './components/Home/Home.jsx'
-import About from './components/About/About.jsx'
-import Contact from './components/Contact/Contact.jsx'
-import User from './components/User/User.jsx'
-import Github, { githubInfoLoader } from './components/Github/Github.jsx'
-import BranchamlMarking from './Components/BranchAML/Branchamlmarking.jsx'
+import Home from './Components/Home/Home.jsx'
+import About from './Components/About/About.jsx'
+import Contact from './Components/Contact/Contact.jsx'
+import User from './Components/User/User.jsx'
+import Github, { githubInfoLoader } from './Components/Github/Github.jsx'
+import BranchamlMarking from './Components/BranchAML/BranchamlMarking.jsx'
 
 function App() {
 // const router = createBrowserRouter([
