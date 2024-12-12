@@ -1347,9 +1347,219 @@ const BranchamlMarking = () => {
     }
 ])
 
+
+  const createtable = () =>{
+    const data = firstGridData
+    console.log("Alert Grid Data", data)
+    const container = document.getElementById('uxTable');
+    container.classList.remove('hidden');
+    container.style.removeProperty('display');
+
+    // Clear existing content
+    container.innerHTML = '';
+
+    // Create table container for height and overflow control
+    const tableContainer = document.createElement('div');
+    tableContainer.style.height = "60vh";
+    tableContainer.style.overflow = "auto";
+    tableContainer.style.scrollbarWidth = "none"; // For Firefox
+    tableContainer.style.msOverflowStyle = "none"; // For Internet Explorer
+    tableContainer.style.position = "relative";
+    tableContainer.style.background = "#fff"; // Optional for better UI contrast
+
+    // Hide scrollbars
+    tableContainer.style.overflowY = "scroll";
+    tableContainer.style.overflowX = "hidden";
+    tableContainer.style.padding = "15px";
+
+    // Create table
+    const table = document.createElement('table');
+    table.style.width = "100%";
+    table.style.borderCollapse = "collapse";
+    table.border = "1";
+
+    // Create table header
+    const thead = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+
+    // Define headers
+    const headers = ['    ', 'Alert', ' ', 'No Of Record', 'Is Verified'];
+    headers.forEach((headerText) => {
+        const th = document.createElement('th');
+        th.textContent = headerText;
+        th.style.padding = "10px";
+        th.style.border = "1px solid #ccc";
+        th.style.textAlign = "left";
+        headerRow.appendChild(th);
+    });
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+
+    // Create table body
+    const tbody = document.createElement('tbody');
+    data.forEach(async (item) => {
+        const row = document.createElement('tr');
+        row.setAttribute('noOfRecord', item.noofrecords); // Store "No Of Record" value as an attribute
+
+        // Radio button column
+        const radioCell = document.createElement('td');
+        const radioButton = document.createElement('input');
+        radioButton.type = 'radio';
+        radioButton.name = 'amlSelection'; // Group radio buttons
+        radioButton.value = item.amlid; // Bind amlid to the value
+        radioButton.style.border = "1px solid #ccc";
+        radioButton.title = `${item.amlid}`;
+        radioButton.setAttribute("reportname", item.reportname);
+        radioButton.setAttribute("pouserid", item.pouserid);
+        radioButton.onchange = (event) => {
+            event.preventDefault()
+            const reportName = event.target.getAttribute('reportname');
+            const pouserid = event.target.getAttribute('pouserid');
+            let selectedAmlId = event.target.value;  // Get the amlid of the selected radio button
+            _IsShowAlert = true
+            radioButtonChange(selectedAmlId, reportName, pouserid)
+        }
+        //radioButton.addEventListener("change", radioButtonChange)
+
+        // Disable the radio button if noofrecords is zero
+        if (parseInt(item.noofrecords, 10) === 0) {
+            radioButton.disabled = true; // Disable the radio button
+            row.disabled = true;
+        }
+
+        // Center align the radio button
+        radioCell.style.textAlign = "center";
+        radioCell.style.padding = "15px"
+        radioCell.appendChild(radioButton);
+        row.appendChild(radioCell);
+
+        // Alert indicator column
+        const indicatorCell = document.createElement('td');
+        indicatorCell.textContent = item.alertindicator;
+        indicatorCell.style.padding = "10px";
+        indicatorCell.style.border = "1px solid #ccc";
+        row.appendChild(indicatorCell);
+
+        // Report name column
+        const reportNameCell = document.createElement('td');
+        reportNameCell.textContent = item.reportname;
+        reportNameCell.style.padding = "10px";
+        reportNameCell.style.border = "1px solid #ccc";
+        row.appendChild(reportNameCell);
+
+        // No Of Record column
+        const noofrecordCell = document.createElement('td');
+        noofrecordCell.textContent = item.noofrecords;
+        noofrecordCell.style.padding = "10px";
+        noofrecordCell.style.border = "1px solid #ccc";
+        row.appendChild(noofrecordCell);
+
+        // Fetch and display count in the "Verified" column
+        //const _uxDate = getAsOnDate();
+        //const _OrgElementID = session.selectedOrgElementId || session.user.OrgElementId;
+
+        //const verifyCell = document.createElement('td');
+        //verifyCell.textContent = 'Loading...'; // Placeholder while fetching
+        //try {
+        //    const count = await fetchTotalVerifiedRecords(item.amlid, _OrgElementID, _uxDate);
+        //    verifyCell.textContent = count > 0 ? count : 'No Records'; // Update with fetched count
+        //} catch (err) {
+        //    verifyCell.textContent = 'Error'; // Display error if any
+        //    console.error("Error fetching verified records:", err);
+        //}
+        //verifyCell.style.padding = "10px";
+        //verifyCell.style.border = "1px solid #ccc";
+        //row.appendChild(verifyCell);
+
+
+        // Details button column
+        const detailsCell = document.createElement('td');
+        const detailsButton = document.createElement('button');
+        detailsButton.textContent = 'Details';
+        detailsButton.style.margin = "5px";
+        detailsButton.style.border = "none";
+        detailsButton.className = "btn btn-link";
+        detailsButton.style.cursor = 'pointer';
+        detailsButton.style.display = "none"; // Initially hidden
+        detailsButton.setAttribute("reportname", item.reportname);
+        detailsButton.setAttribute("amlid", item.amlid);
+        detailsButton.style.cursor = 'pointer';
+
+        detailsButton.onclick = (e) => {
+            e.preventDefault();
+            const reportName = e.target.getAttribute('reportname'); // Get the reportname attribute
+            const amlid = e.target.getAttribute('amlid'); // Get the amlId attribute
+            showDetailsPopup(amlid, reportName); // Pass reportname to the function
+        };
+        detailsCell.appendChild(detailsButton);
+        row.appendChild(detailsCell);
+
+        //// ** Apply Row Colors Based on Conditions **
+        //if (item.isdataverifiedbybranch === "1") {
+        //    row.style.backgroundColor = "orange"; // Orange for branch data verified
+        //} else if (item.isdataverifiedbypo === "1") {
+        //    row.style.backgroundColor = "Khaki"; // Khaki for PO data verified
+        //}
+
+
+        // Fetch total and verified counts, then apply row colors based on conditions
+        try {
+            const _uxDate = getAsOnDate();
+            const _OrgElementID = session.selectedOrgElementId || session.user.OrgElementId;
+            const totalVerifiedCount = await fetchTotalAndVerifiedRecords(item.amlid, _OrgElementID, _uxDate);
+            if (totalVerifiedCount.total > 0) {
+                if (totalVerifiedCount.total === totalVerifiedCount.verified) {
+                    debugger;
+                    // Total verified count matches verified count
+                    row.style.backgroundColor = "orange";
+                    detailsButton.style.display = "inline-block"
+
+                } else if (totalVerifiedCount.verified > 0) {
+                    // Some Record Verify
+                    row.style.backgroundColor = "#289995";
+                    detailsButton.style.display = "inline-block"
+                } else {
+                    // Default or no color
+                    row.style.backgroundColor = "white"; // Optional
+                }
+            } else {
+                row.style.backgroundColor = "white"; // Optional
+            }
+        } catch (err) {
+            console.error("Error applying row colors:", err);
+            row.style.backgroundColor = "purple"; // Optional for error indication
+        }
+
+        if (item.pouserid > 0) {
+            // Marked by PO
+            debugger;
+            row.style.backgroundColor = "Khaki";
+
+        }
+
+        tbody.appendChild(row);
+        // Optionally, you can call the checkbox function right here (if needed):
+        const checkbox = document.getElementById('uxExcludeZero'); // Get checkbox by ID
+
+        filterRowsBasedOnCheckbox(checkbox, tbody);  // Call the filtering function after table is generated
+
+        checkbox.addEventListener('change', () => {
+            filterRowsBasedOnCheckbox(checkbox, tbody); // Reapply filtering when checkbox state changes
+        });
+
+
+    });
+
+    table.appendChild(tbody);
+    tableContainer.appendChild(table); // Append table to container
+    container.appendChild(tableContainer); // Append table container to uxAMLAlertGrid
+  }
+    
+
   const clickHandle = async(e) =>{
            e.preventDefault()
    alert("click")
+   createtable()
    try {
     const response = await fetch("https://api.example.com/data"); // API endpoint
     const data = await response.json();
@@ -1399,44 +1609,7 @@ const BranchamlMarking = () => {
         Go
       </button>
       </div>
-      {/* Table to display firstGridData */}
-      <div className="overflow-x-auto">
-        <table className="min-w-full border-collapse border border-gray-200 mt-4">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="border border-gray-300 px-4 py-2">ID</th>
-              <th className="border border-gray-300 px-4 py-2">AML ID</th>
-              <th className="border border-gray-300 px-4 py-2">Alert Indicator</th>
-              <th className="border border-gray-300 px-4 py-2">Report Name</th>
-              <th className="border border-gray-300 px-4 py-2">No of Records</th>
-              <th className="border border-gray-300 px-4 py-2">Is Verified</th>
-            </tr>
-          </thead>
-          <tbody>
-            {firstGridData.length > 0 ? (
-              firstGridData.map((data) => (
-                <tr key={data.id} className="text-center">
-                  <td className="border border-gray-300 px-4 py-2">{data.id}</td>
-                  <td className="border border-gray-300 px-4 py-2">{data.amlid}</td>
-                  <td className="border border-gray-300 px-4 py-2">{data.alertindicator}</td>
-                  <td className="border border-gray-300 px-4 py-2">{data.reportname}</td>
-                  <td className="border border-gray-300 px-4 py-2">{data.noofrecords}</td>
-                  <td className="border border-gray-300 px-4 py-2">{data.isverified}</td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td
-                  colSpan="6"
-                  className="border border-gray-300 px-4 py-2 text-center text-gray-500"
-                >
-                  No data available
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+     <div id="uxTable"></div>
     </div>
   );
 };
