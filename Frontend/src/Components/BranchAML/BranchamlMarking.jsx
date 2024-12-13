@@ -1,130 +1,26 @@
 import  { useState, useEffect } from "react";
+import axios from "axios"; // Import Axios
 
 
 const BranchamlMarking = () => {
-  const [dropdownOptions, setDropdownOptions] = useState([
-    {
-        "orgelementid": "99",
-        "name": "000 - HEAD OFFICE"
-    },
-    {
-        "orgelementid": "1",
-        "name": "001 - MAIN BRANCH"
-    },
-    {
-        "orgelementid": "2",
-        "name": "002 - BAMBAVADE"
-    },
-    {
-        "orgelementid": "3",
-        "name": "003 - KIRLOSKARWADI"
-    },
-    {
-        "orgelementid": "4",
-        "name": "004 - TASGAON"
-    },
-    {
-        "orgelementid": "5",
-        "name": "005 - BHILAWADI"
-    },
-    {
-        "orgelementid": "6",
-        "name": "006 - ISLAMPUR"
-    },
-    {
-        "orgelementid": "7",
-        "name": "007 - MAHAVEERNAGAR SANGLI"
-    },
-    {
-        "orgelementid": "8",
-        "name": "008 - LAXMIPURI KOLHAPUR"
-    },
-    {
-        "orgelementid": "9",
-        "name": "009 - KOKRUD"
-    },
-    {
-        "orgelementid": "10",
-        "name": "010 - UCHGAON"
-    },
-    {
-        "orgelementid": "11",
-        "name": "011 - KUNDAL"
-    },
-    {
-        "orgelementid": "12",
-        "name": "012 - ARAG"
-    },
-    {
-        "orgelementid": "13",
-        "name": "013 - MALKAPUR"
-    },
-    {
-        "orgelementid": "14",
-        "name": "014 - VISHRAMBAG SANGLI"
-    },
-    {
-        "orgelementid": "15",
-        "name": "015 - PALUS CITY"
-    },
-    {
-        "orgelementid": "16",
-        "name": "016 - LAXMI MARKET MIRAJ"
-    },
-    {
-        "orgelementid": "17",
-        "name": "017 - KUPWAD"
-    },
-    {
-        "orgelementid": "18",
-        "name": "018 - AKLUJ"
-    },
-    {
-        "orgelementid": "19",
-        "name": "019 - KADEGAON"
-    },
-    {
-        "orgelementid": "20",
-        "name": "020 - VITA BRANCH"
-    },
-    {
-        "orgelementid": "21",
-        "name": "021 - MADHAVNAGAR SANGLI"
-    },
-    {
-        "orgelementid": "22",
-        "name": "022 - ATPADI"
-    },
-    {
-        "orgelementid": "23",
-        "name": "023 - JATH"
-    },
-    {
-        "orgelementid": "24",
-        "name": "024 - KAVATHE MAHANKAL"
-    },
-    {
-        "orgelementid": "9998",
-        "name": "9998 - HO"
-    }
-]); // State to store dropdown data
+  const [dropdownOptions, setDropdownOptions] = useState([]); // State to store dropdown data
   const [selectedOption, setSelectedOption] = useState(""); // State for the selected dropdown option
 
-  // Effect hook to fetch data on component mount
   useEffect(() => {
-    // Replace this URL with the actual API URL
     const fetchData = async () => {
       try {
-        const response = await fetch("https://api.example.com/data"); // API endpoint
-        const data = await response.json();
-        setDropdownOptions(data); // Set the data in state
+        const response = await axios.get("http://localhost:8080/api/orgelements/org"); // Axios GET request
+        console.log("Fetched data:", response.data); // Log the fetched data to console
+        console.log("Fetched resonse:", response); // Log the fetched data to console
+        setDropdownOptions(response.data);
+
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Error fetching data:", error); // Log any errors
       }
     };
 
     fetchData(); // Call the function to fetch data
-  }, []); // Empty dependency array to run only on component mount
+  },[]); // Empty dependency array to run only on component mount
 
   const boxStyle = {
     backgroundColor: "#fff",
